@@ -62,4 +62,11 @@ public class ParticipantService {
     }
 
 
+    public void deleteParticipant(String login) {
+        Session session = connector.getSession();
+        Transaction transaction = session.beginTransaction();
+        Participant persistentParticipant = findByLogin(login);
+        session.delete(persistentParticipant);
+        transaction.commit();
+    }
 }
