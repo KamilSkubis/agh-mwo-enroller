@@ -60,10 +60,17 @@ public class MeetingService {
 	public void addParticipantToMeeting(Participant participant, Meeting meeting) {
 		Session session = connector.getSession();
 		Transaction t = session.beginTransaction();
-
 		session.evict(meeting);
 		meeting.addParticipant(participant);
 		session.update(meeting);
 		t.commit();
+	}
+
+	public void deleteMeeting(Meeting meeting) {
+		Session session = connector.getSession();
+		Transaction t = session.beginTransaction();
+		session.delete(meeting);
+		t.commit();
+
 	}
 }

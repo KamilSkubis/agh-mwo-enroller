@@ -61,12 +61,24 @@ public class MeetingRestController {
     }
 
 
-    @GetMapping(value="/{id}/participants")
-    public ResponseEntity<?> getParticipantsFromMeeting(@PathVariable("id") String meetingId){
+    @GetMapping(value = "/{id}/participants")
+    public ResponseEntity<?> getParticipantsFromMeeting(@PathVariable("id") String meetingId) {
         Meeting meeting = meetingService.getMeetingById(meetingId);
-        if(meeting == null){
+        if (meeting == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(meeting.getParticipants(), HttpStatus.OK);
     }
+
+    @DeleteMapping(value="/{id}")
+    public ResponseEntity<?> deleteMeeting(@PathVariable("id") String meetingId){
+        Meeting meeting = meetingService.getMeetingById(meetingId);
+        if(meeting == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        meetingService.deleteMeeting(meeting);
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+
 }
