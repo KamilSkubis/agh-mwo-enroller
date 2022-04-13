@@ -2,7 +2,6 @@ package com.company.enroller.controllers;
 
 import com.company.enroller.model.Meeting;
 import com.company.enroller.model.Participant;
-import com.company.enroller.model.ParticipantDTO;
 import com.company.enroller.persistence.MeetingService;
 import com.company.enroller.persistence.ParticipantService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,12 +43,14 @@ public class MeetingRestController {
         return new ResponseEntity<>("Meeting with this id:" + meeting.getId() + " already exist", HttpStatus.CONFLICT);
     }
 
+
     @PatchMapping(value = "/{meetingId}")
-    public ResponseEntity<?> addParticipantToMeeting(@RequestBody ParticipantDTO participantId,
+    public ResponseEntity<?> addParticipantToMeeting(@RequestBody Map<String, String> updates,
                                                      @PathVariable("meetingId") String id) {
         Meeting meeting = meetingService.getMeetingById(id);
         ParticipantService participantService = new ParticipantService();
-        Participant participant = participantService.findByLogin(String.valueOf(participantId.getLogin()));
+        Participant participant = participantService
+                .findByLogin(updates.get("login"));
 
         if (meeting == null) {
             return new ResponseEntity<>("No meeting with id:" + id, HttpStatus.NOT_FOUND);
@@ -59,5 +60,13 @@ public class MeetingRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    
+
+    @GetMapping(value="/{id}/participants")
+    public ResponseEntity<?> getParticipantsFromMeeting(@PathVariable("id") String meetingId){
+        Meeting meeting = meetingService.getMeetingById(meetingId);
+        if(meeting == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(meeting.getParticipants(), HttpStatus.OK);
+    }
 }
