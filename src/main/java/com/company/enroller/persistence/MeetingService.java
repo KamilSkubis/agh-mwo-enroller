@@ -1,6 +1,7 @@
 package com.company.enroller.persistence;
 
 import java.util.Collection;
+import java.util.Map;
 
 import com.company.enroller.model.Participant;
 import org.hibernate.Session;
@@ -43,8 +44,7 @@ public class MeetingService {
 				where(builder.equal(meetingRoot.get("id"), meetingId));
 
 		Query<Meeting> meetingQuery = session.createQuery(criteriaQuery);
-		Meeting meeting = meetingQuery.getSingleResult();
-		return meeting;
+			return meetingQuery.getSingleResult();
 		}catch (NoResultException e){
 			return null;
 		}
@@ -57,14 +57,6 @@ public class MeetingService {
 		t.commit();
 	}
 
-	public void addParticipantToMeeting(Participant participant, Meeting meeting) {
-		Session session = connector.getSession();
-		Transaction t = session.beginTransaction();
-		session.evict(meeting);
-		meeting.addParticipant(participant);
-		session.update(meeting);
-		t.commit();
-	}
 
 	public void deleteMeeting(Meeting meeting) {
 		Session session = connector.getSession();
@@ -72,5 +64,39 @@ public class MeetingService {
 		session.delete(meeting);
 		t.commit();
 
+	}
+
+	public void updateData(Map<String, String> updates, Meeting meeting) {
+
+		Session session = connector.getSession();
+		Transaction t = session.beginTransaction();
+		session.evict(meeting);
+
+		if(updates.containsKey("title")){
+			meeting.setTitle(updates.get("title"));
+		}
+		if(updates.containsKey("description")){
+			meeting.setDescription(updates.get("description"));
+		}
+		if(updates.containsKey("date")){
+			meeting.setDate(updates.get("date"));
+		}
+		if(updates.containsKey("participant")){
+			ParticipantService participantService = new ParticipantService();
+			Participant participant = participantService.findByLogin(updates.get("participant"));
+			meeting.addParticipant(participant);
+		}
+		session.update(meeting);
+		t.commit();
+
+	}
+
+	public void deleteParticipantFromMeeting(Meeting meeting, Participant participant) {
+		Session session = connector.getSession();
+		Transaction t = session.beginTransaction();
+		session.evict(meeting);
+		meeting.getParticipants().remove(participant);
+		session.update(meeting);
+		t.commit();
 	}
 }
