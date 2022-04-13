@@ -30,4 +30,12 @@ public class Participant {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	@Override
+	public String toString() {
+		return "Participant{" +
+				"login='" + login + '\'' +
+				", password='" + password + '\'' +
+				'}';
+	}
 }

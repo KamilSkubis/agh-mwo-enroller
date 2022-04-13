@@ -75,4 +75,14 @@ public class Meeting {
 		return participants;
 	}
 
+	@Override
+	public String toString() {
+		return "Meeting{" +
+				"id=" + id +
+				", title='" + title + '\'' +
+				", description='" + description + '\'' +
+				", date='" + date + '\'' +
+				", participants=" + participants +
+				'}';
+	}
 }
